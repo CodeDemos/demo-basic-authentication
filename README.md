@@ -1,17 +1,27 @@
-Basic Authentication
-================================
+Basic Auth w/ Passport and Bcrypt
+=================================
 
-Step 1: Note: the passport basic strategy is really only responsible for telling the browser to prompt the user a UN/PW and then receiving them. It is your responsibility as a developer to 'fill-in' the details on how to compare the passwords. For step 1, we just compare hardcoded plain-text passwords. 
+Step 1: Compare hardcoded plain-text passwords. 
   - Instantiate a strategy and implement a basic password comparison
   - Protect endpoint with Passport basic strategy using a hardcoded UN/PW
+  - In browser, go to: `http://localhost:8080/api/protected/`
+    - Should be promopted for UN/PW by browser
+    - Type in bobuser/baseball and submit
+    - Should get back "Hello, bobuser"
 
-Step 2: Add Mongoose (and mongo) into the mix so we can store and retrieve passwords for multiple users.
-  - Create User with plain-text UN/PW and store in DB
+
+Step 2: Add Mongo/Mongoose so we can work with multiple users.
+  - Create a POST `/api/users` endpoint that stores the plain-text UN/PW
+  - Add a user, and verify the user is saved in the DB
   - Update Basic Strategy to find the user and compare password
+  - In browser, go to: `http://localhost:8080/api/protected/`
+    - Should be promopted for UN/PW by browser
+    - Type in bobuser/baseball and submit
+    - Should get back "Hello, bobuser" plus details
 
-Step 3: Finally, add Bcrypt to the mix so we can hash the passwords before storing them and use bcrypt.compare to validate authentication.
-  - Add Bcrypt to hash password before saving
-  - Add Bcrypt to validate passwords when comparing
+Step 3: Finally, add Bcrypt to hash the passwords
+  - Add `bcrypt.hash` to hash password before persisting to DB
+  - Add `bcrypt.compare` to validate passwords when comparing
  
 Bonus file
 - bcrypt.js is a standalone demo of .hash() and .compare()
