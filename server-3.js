@@ -22,8 +22,8 @@ app.use(jsonParser);
 
 // ===== Define UserSchema & UserModel =====
 var UserSchema = new mongoose.Schema({
-  firstName: {type: String, default: ""},
-  lastName: {type: String, default: ""},
+  firstName: {type: String, default: ''},
+  lastName: {type: String, default: ''},
   username: {
     type: String,
     required: true,
@@ -42,15 +42,15 @@ UserSchema.methods.apiRepr = function() {
     firstName: this.firstName,
     lastName: this.lastName
   };
-}
+};
 
 UserSchema.methods.validatePassword = function(password) {
   return bcrypt.compare(password, this.password);
-}
+};
 
 UserSchema.statics.hashPassword = function(password) {
   return bcrypt.hash(password, 10);
-}
+};
 
 var UserModel = mongoose.model('User', UserSchema);
 
@@ -96,7 +96,7 @@ passport.use(basicStrategy);
 app.use(passport.initialize());
 
 const authenticate = passport.authenticate('basic', {session: false});
-console.log(authenticate)
+console.log(authenticate);
 
 // ===== Protected endpoint =====
 app.get('/api/protected', authenticate, function (req, res) {
@@ -127,7 +127,7 @@ app.post('/api/users', jsonParser, function(req, res) {
         });
       }
       // if no existing user, hash password
-      return UserModel.hashPassword(password)
+      return UserModel.hashPassword(password);
     })
     .then(digest => {
       return UserModel
@@ -136,7 +136,7 @@ app.post('/api/users', jsonParser, function(req, res) {
           password: digest,
           firstName,
           lastName
-        })
+        });
     })
     .then(user => {
       return res.status(201).json(user.apiRepr());
@@ -152,6 +152,6 @@ app.post('/api/users', jsonParser, function(req, res) {
 mongoose.connect(process.env.DATABASE_URL)
   .then(() => {
     app.listen(process.env.PORT || 8080, () => {
-      console.log(`app listening on port ${process.env.PORT || 8080}`)
+      console.log(`app listening on port ${process.env.PORT || 8080}`);
     });
   }); 

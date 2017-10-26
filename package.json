@@ -1,5 +1,5 @@
 {
-  "name": "authentication",
+  "name": "basic-authentication",
   "version": "0.0.1",
   "description": "Demo Passport Basic Authentication and Bcrypt",
   "main": "server.js",
@@ -15,14 +15,5 @@
     "passport-http": "^0.3.0",
     "bcryptjs": "^2.4.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://hyperdev.com/#!/project/welcome-project"
-  },
-  "keywords": [
-    "node",
-    "hyperdev",
-    "express"
-  ],
   "license": "MIT"
 }

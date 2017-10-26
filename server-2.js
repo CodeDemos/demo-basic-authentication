@@ -19,8 +19,8 @@ var app = express();
 
 // ===== Define UserSchema & UserModel =====
 var UserSchema = new mongoose.Schema({
-  firstName: {type: String, default: ""},
-  lastName: {type: String, default: ""},
+  firstName: {type: String, default: ''},
+  lastName: {type: String, default: ''},
   username: {
     type: String,
     required: true,
@@ -39,10 +39,10 @@ UserSchema.methods.apiRepr = function() {
     firstName: this.firstName,
     lastName: this.lastName
   };
-}
+};
 
 UserSchema.methods.validatePassword = function(password) {  
-    return password === this.password;
+  return password === this.password;
 };
 
 var UserModel = mongoose.model('User', UserSchema);
@@ -128,6 +128,6 @@ app.post('/api/users', jsonParser, function(req, res) {
 mongoose.connect(process.env.DATABASE_URL)
   .then(() => {
     app.listen(process.env.PORT || 8080, () => {
-      console.log(`app listening on port ${process.env.PORT || 8080}`)
+      console.log(`app listening on port ${process.env.PORT || 8080}`);
     });
   }); 

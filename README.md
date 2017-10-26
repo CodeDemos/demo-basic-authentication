@@ -1,7 +1,7 @@
 Basic Authentication
 ================================
 
-Step 1: Note: the passport basic strategy is really only responsible for telling the browser to prompt the user a UN/PW and then receiving them. It is your responsiblity as a developer to 'fill-in' the details on how to compare the passwords. For step 1, we just compare hardcoded plain-text passwords. 
+Step 1: Note: the passport basic strategy is really only responsible for telling the browser to prompt the user a UN/PW and then receiving them. It is your responsibility as a developer to 'fill-in' the details on how to compare the passwords. For step 1, we just compare hardcoded plain-text passwords. 
   - Instantiate a strategy and implement a basic password comparison
   - Protect endpoint with Passport basic strategy using a hardcoded UN/PW
 
@@ -13,6 +13,5 @@ Step 3: Finally, add Bcrypt to the mix so we can hash the passwords before stori
   - Add Bcrypt to hash password before saving
   - Add Bcrypt to validate passwords when comparing
  
-
 Bonus file
 - bcrypt.js is a standalone demo of .hash() and .compare()
