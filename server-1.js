@@ -37,7 +37,7 @@ const authenticate = passport.authenticate('basic', { session: false });
 
 // ===== Protected endpoint =====
 app.get('/api/protected', authenticate, function (req, res) {
-  res.json(req.user);
+  res.send(`Hello, ${req.user.username}`);
 });
 
 // ===== Public endpoint =====

@@ -5,23 +5,22 @@
  * - Add Bcrypt to validate passwords when comparing
  */
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
+const express = require('express');
+const bodyParser = require('body-parser');
+require('dotenv').config();
+const passport = require('passport');
+const BasicStrategy = require('passport-http').BasicStrategy;
 
-var passport = require('passport');
-var BasicStrategy = require('passport-http').BasicStrategy;
-
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const bcrypt = require('bcryptjs');
-var app = express();
+const app = express();
 
-app.use(jsonParser);
+app.use(bodyParser.json());
 
 // ===== Define UserSchema & UserModel =====
-var UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   firstName: {type: String, default: ''},
   lastName: {type: String, default: ''},
   username: {
@@ -52,15 +51,15 @@ UserSchema.statics.hashPassword = function(password) {
   return bcrypt.hash(password, 10);
 };
 
-var UserModel = mongoose.model('User', UserSchema);
+const UserModel = mongoose.model('User', UserSchema);
 
 // ===== Define and create basicStrategy =====
 const basicStrategy = new BasicStrategy((username, password, done) => {
   let user;
   UserModel
     .findOne({ username })
-    .then(results => {
-      user = results;    
+    .then(_user => {
+      user = _user;    
       
       if (!user) {
         return Promise.reject({
@@ -88,19 +87,16 @@ const basicStrategy = new BasicStrategy((username, password, done) => {
       }
 
       return done(err);
-
     });
 });
 
 passport.use(basicStrategy);
-app.use(passport.initialize());
 
 const authenticate = passport.authenticate('basic', {session: false});
-console.log(authenticate);
 
 // ===== Protected endpoint =====
 app.get('/api/protected', authenticate, function (req, res) {
-  res.json( req.user.apiRepr() );
+  res.send(`hurray ${ JSON.stringify(req.user.apiRepr()) }` );
 }); 
 
 // ===== Public endpoint =====
@@ -110,7 +106,8 @@ app.get('/api/public', function (req, res) {
 
 // ===== Post '/users' endpoint to save a new User =====
 // NOTE: validation and some error handling removed for brevity
-app.post('/api/users', jsonParser, function(req, res) {
+app.post('/api/users', function(req, res) {
+  console.log(req, res);
   // NOTE: validation removed for brevity
   let {username, password, firstName, lastName} = req.body;
 
@@ -149,7 +146,7 @@ app.post('/api/users', jsonParser, function(req, res) {
     });
 });
 
-mongoose.connect(process.env.DATABASE_URL)
+mongoose.connect(process.env.DATABASE_URL, {useMongoClient: true})
   .then(() => {
     app.listen(process.env.PORT || 8080, () => {
       console.log(`app listening on port ${process.env.PORT || 8080}`);

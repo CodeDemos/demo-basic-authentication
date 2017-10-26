@@ -5,20 +5,21 @@
  * - Update Basic Strategy to finduser and compare
  */
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
-
-var passport = require('passport');
-var BasicStrategy = require('passport-http').BasicStrategy;
-
-var mongoose = require('mongoose');
+require('dotenv').config();
+const express = require('express');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const BasicStrategy = require('passport-http').BasicStrategy;
+const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-var app = express();
+
+
+const app = express();
+app.use(bodyParser.json());
 
 // ===== Define UserSchema & UserModel =====
-var UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   firstName: {type: String, default: ''},
   lastName: {type: String, default: ''},
   username: {
@@ -45,15 +46,13 @@ UserSchema.methods.validatePassword = function(password) {
   return password === this.password;
 };
 
-var UserModel = mongoose.model('User', UserSchema);
+const UserModel = mongoose.model('User', UserSchema);
 
 // ===== Define and create basicStrategy =====
-var basicStrategy = new BasicStrategy(function(username, password, done) {
-  let user;
+const basicStrategy = new BasicStrategy(function(username, password, done) {
   UserModel
     .findOne({ username })
-    .then(results => {
-      user = results;    
+    .then(user => {
       
       if (!user) {
         return Promise.reject({
@@ -73,6 +72,7 @@ var basicStrategy = new BasicStrategy(function(username, password, done) {
       }
       return done(null, user);    
     }).catch(err => {
+      console.log(err);
       if (err.reason === 'LoginError') {
         return done(null, false);
       }
@@ -86,7 +86,8 @@ const authenticate = passport.authenticate('basic', {session: false});
 
 // ===== Protected endpoint =====
 app.get('/api/protected', authenticate, function (req, res) {
-  res.json( req.user );
+  // res.send(`Hello, ${req.user.username}. <br>Details: ${req.user}`);
+  res.send(`Hello, ${req.user.username}. <br>Details: ${JSON.stringify(req.user.apiRepr())}`);
 }); 
 
 // ===== Public endpoint =====
@@ -125,7 +126,7 @@ app.post('/api/users', jsonParser, function(req, res) {
     });
 });
 
-mongoose.connect(process.env.DATABASE_URL)
+mongoose.connect(process.env.DATABASE_URL, {useMongoClient: true})
   .then(() => {
     app.listen(process.env.PORT || 8080, () => {
       console.log(`app listening on port ${process.env.PORT || 8080}`);
